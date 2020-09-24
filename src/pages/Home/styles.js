@@ -10,6 +10,26 @@ export const Main = styled.div`
   header {
     grid-column: 1/6;
     grid-row: 1/2;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    padding-left: 0.5em;
+    button {
+      background: ${colors.lightBlue};
+      color: ${colors.darkPink};
+      width: 4em;
+      height: 2em;
+      font-size: 1em;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    span {
+      color: ${colors.white};
+      font-size: 1.5em;
+      margin-left: auto;
+      margin-right: auto;
+    }
   }
   main {
     grid-column: 1/4;
@@ -29,7 +49,17 @@ export const Main = styled.div`
         li:first-child {
           margin-left: 0em;
         }
+        li:last-child {
+          background: ${colors.lightGreen};
+          border-radius: 2px;
+          color: ${colors.white};
+          &:hover {
+            background: ${colors.darkGreen};
+          }
+        }
         li {
+          display: flex;
+          justify-content: space-between;
           cursor: pointer;
           height: 1.5em;
           border: 1px solid ${colors.white};
@@ -37,6 +67,20 @@ export const Main = styled.div`
           span {
             color: ${colors.darkGray};
             font-size: 0.9em;
+          }
+          button {
+            background: ${colors.lightGray};
+            color: ${colors.white};
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            width: 5em;
+            transition: 1s;
+            &:hover {
+              height: 1.5em;
+              background: ${colors.darkPink};
+            }
           }
 
           &:hover {
@@ -61,25 +105,12 @@ export const Main = styled.div`
       li {
         div {
           position: relative;
-          border: 1px solid ${colors.black};
-          background: ${colors.darkPink};
           display: block;
           width: 4em;
           height: 4em;
           perspective: 200px;
           cursor: pointer;
-          &::before {
-            position: absolute;
-            content: "";
-            border: 1px solid ${colors.black};
-            background: ${colors.mediumPink};
-            display: block;
-            width: 3.8em;
-            height: 3.8em;
-            transform-style: preserve-3d;
-            transform: rotate3d(-10, 1, 5, 10deg);
-            top: 5%;
-          }
+
           &:hover {
             transform: rotate3d(-5, 2, 6, 11deg);
           }
@@ -91,30 +122,120 @@ export const Main = styled.div`
     }
   }
   aside {
-    grid-column: 5/6;
+    grid-column: 4/6;
     grid-row: 2/8;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    #info {
-      background: green;
+    background: ${colors.mediumPurple};
+    form {
+      height: 100%;
       width: 100%;
       display: flex;
       flex-direction: column;
-      justify-content: flex-start;
+      justify-content: center;
       align-items: center;
-      height: 100%;
-      input {
-        width: 85%;
-        background: transparent;
-        border: none;
-        border-bottom: 1px solid ${colors.darkGray};
+      #info {
+        width: 375px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+        align-items: center;
+        height: 100%;
+
+        input {
+          width: 85%;
+          background: transparent;
+          border: none;
+          border-bottom: 1px solid ${colors.darkGray};
+          color: ${colors.white};
+        }
+        #imageWrap {
+          width: 100%;
+          height: 50%;
+          background: white;
+          border-radius: 8px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          img {
+            object-fit: contain;
+            max-width: 50%;
+          }
+        }
+        #buttonLoadImg {
+          position: relative;
+          width: 100%;
+          height: 100%;
+          overflow: hidden;
+          @keyframes kickself {
+            from {
+              transform: rotateZ(0deg);
+            }
+            to {
+              transform: rotateZ(360deg);
+            }
+          }
+          img {
+            position: absolute;
+            max-width: 20%;
+            top: 0;
+            left: 0;
+            animation: kickself forwards infinite 2s ease-in-out;
+          }
+
+          input[type="file"] {
+            display: block;
+            opacity: 0;
+            padding: 20px 10px;
+            width: 200px;
+            background-color: ${colors.lightBlue};
+            color: #fff;
+            text-transform: uppercase;
+            text-align: center;
+            z-index: 500;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+          }
+          #labelforfile {
+            padding: 20px 10px;
+            width: 200px;
+            background-color: ${colors.lightBlue};
+            color: #fff;
+            text-transform: uppercase;
+            text-align: center;
+            display: block;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+          }
+        }
+        button {
+          background: ${colors.lightBlue};
+          border: none;
+          height: 3em;
+          width: 6em;
+          border-radius: 8px;
+          color: ${colors.darkPink};
+          cursor: pointer;
+        }
       }
-      #imageWrap {
-        width: 100%;
-        height: 50%;
-        background: white;
+    }
+    #animation {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      #logo {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        position: absolute;
       }
     }
   }
