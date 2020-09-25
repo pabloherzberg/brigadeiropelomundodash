@@ -48,6 +48,7 @@ export const Main = styled.div`
         gap: 0.5em;
         li:first-child {
           margin-left: 0em;
+          margin-top: 2em;
         }
         li:last-child {
           background: ${colors.lightGreen};
@@ -69,17 +70,52 @@ export const Main = styled.div`
             font-size: 0.9em;
           }
           button {
-            background: ${colors.lightGray};
-            color: ${colors.white};
+            position: relative;
+            width: 6em;
             border: none;
             border-radius: 8px;
             font-size: 1em;
             cursor: pointer;
-            width: 5em;
-            transition: 1s;
-            &:hover {
-              height: 1.5em;
+            display: grid;
+            place-items: center;
+            &:hover::before {
+              animation: cardio infinite forwards 950ms;
+            }
+            &::before {
+              border-radius: 8px;
               background: ${colors.darkPink};
+              content: "";
+              position: absolute;
+              top: 0;
+              left: 0;
+              right: 0;
+              bottom: 0;
+              margin: auto;
+            }
+            &::after {
+              border-radius: 8px;
+              color: ${colors.white};
+              content: "Deletar";
+              display: block;
+              background: ${colors.mediumPink};
+              position: absolute;
+              top: 0;
+              left: 0;
+              right: 0;
+              bottom: 0;
+              margin: auto;
+            }
+            @keyframes cardio {
+              from {
+                transform: scale(1);
+
+                opacity: 1;
+              }
+              to {
+                transform: scale(1.5);
+
+                opacity: 0;
+              }
             }
           }
 
@@ -91,32 +127,6 @@ export const Main = styled.div`
               color: ${colors.black};
             }
           }
-        }
-      }
-    }
-    ul {
-      display: flex;
-      list-style: none;
-      gap: 2em;
-      margin-top: 2em;
-      li:first-child {
-        margin-left: 2em;
-      }
-      li {
-        div {
-          position: relative;
-          display: block;
-          width: 4em;
-          height: 4em;
-          perspective: 200px;
-          cursor: pointer;
-
-          &:hover {
-            transform: rotate3d(-5, 2, 6, 11deg);
-          }
-        }
-        span {
-          color: ${colors.white};
         }
       }
     }
