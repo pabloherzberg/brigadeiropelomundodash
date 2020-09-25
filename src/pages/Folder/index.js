@@ -114,7 +114,8 @@ function Folder() {
               {listOfCandys[folder].map((item, index) => (
                 <li key={index} onClick={() => getCandyInfo(item, index)}>
                   <span>{item.name}</span>
-                  <button onClick={() => handleDelete(index)}>Deletar</button>
+
+                  <button onClick={() => handleDelete(index)}></button>
                 </li>
               ))}
               <li
