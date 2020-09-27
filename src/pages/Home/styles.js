@@ -14,12 +14,32 @@ export const Main = styled.div`
     justify-content: space-evenly;
     align-items: center;
     padding-left: 0.5em;
+    position: relative;
+    #airplaneHeader {
+      position: absolute;
+      top: 15%;
+      left: 25%;
+      width: 30px;
+      height: 30px;
+      object-fit: contain;
 
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      img {
+        object-fit: contain;
+        max-width: 65%;
+        max-height: 65%;
+        transform: rotate(-45deg);
+      }
+    }
     span {
+      position: absolute;
       color: ${colors.white};
       font-size: 1.5em;
       margin-left: auto;
       margin-right: auto;
+      font-family: "Graduate", cursive;
     }
   }
   main {
@@ -67,37 +87,47 @@ export const Main = styled.div`
 
     #animation {
       position: relative;
-      width: 100%;
-      height: 100%;
+      width: 300px;
+      height: 300px;
       grid-column: 2/3;
       grid-row: 2/3;
+
       #logo {
         position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        width: 350px;
-        height: 350px;
+        width: 300px;
+        height: 300px;
         object-fit: contain;
       }
       #line {
-        position: absolute;
-        top: 30%;
+        position: relative;
+        opacity: 0;
+        top: 40%;
         left: 50%;
         transform: translate(-50%, -50%);
-        width: 150px;
-        height: 150px;
+        width: 110px;
+        height: 110px;
         object-fit: contain;
       }
       #airplane {
         position: absolute;
-
-        top: 0%;
-        left: 0%;
-        transform: translate(-50%, -50%);
+        top: 15%;
+        left: 25%;
         width: 30px;
         height: 30px;
         object-fit: contain;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        img {
+          object-fit: contain;
+          max-width: 65%;
+          max-height: 65%;
+          transform: rotate(-45deg);
+        }
       }
     }
   }
