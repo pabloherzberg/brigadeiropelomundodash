@@ -25,7 +25,7 @@ function Routes() {
           <Redirect to="/login" />
         )}
         {user ? (
-          <Route path="/folder" exact component={Folder} />
+          <Route path="/pasta" exact component={Folder} />
         ) : (
           <Redirect to="/login" />
         )}
