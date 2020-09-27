@@ -1,17 +1,34 @@
 import React from "react";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 
 import Home from "./pages/Home";
 import Auth from "./pages/Auth";
 import Folder from "./pages/Folder";
 
 function Routes() {
+  const userData = sessionStorage.getItem("user");
+  const user = JSON.parse(userData);
+  console.log(user);
+
   return (
     <BrowserRouter>
       <Switch>
-        <Route exact path="/" component={Home} />
-        <Route exact path="/login" component={Auth} />
-        <Route exact path="/pasta" component={Folder} />
+        <Route path="/login" exact component={Auth} />
+        {user ? (
+          <Route path="/" exact component={Home} />
+        ) : (
+          <Redirect to="/login" />
+        )}
+        {user ? (
+          <Route path="/home" exact component={Home} />
+        ) : (
+          <Redirect to="/login" />
+        )}
+        {user ? (
+          <Route path="/folder" exact component={Folder} />
+        ) : (
+          <Redirect to="/login" />
+        )}
       </Switch>
     </BrowserRouter>
   );

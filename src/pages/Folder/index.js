@@ -102,7 +102,7 @@ function Folder() {
   return (
     <Main>
       <header>
-        <button onClick={() => history.push("/")}>voltar</button>
+        <button onClick={() => history.push("/home")}>voltar</button>
         <span>Pasta {folder}</span>
       </header>
       <main>
