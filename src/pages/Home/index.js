@@ -4,14 +4,12 @@ import { useHistory } from "react-router-dom";
 
 import Loading from "../../components/Loading";
 
-import logo from "../../assets/img/logo196.png";
+import logo from "../../assets/img/brigadeiropelomundo.png";
 import folderSVG from "../../assets/img/folder.svg";
 import airplaneSVG from "../../assets/svg/airplane.svg";
-import lineSVG from "../../assets/svg/line2.svg";
 
 import { Main } from "./styles.js";
 import anime from "animejs/lib/anime.es.js";
-import { path } from "animejs";
 
 function Home() {
   const [loading, setLoading] = useState(true);
