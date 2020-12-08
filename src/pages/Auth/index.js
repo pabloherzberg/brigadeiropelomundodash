@@ -3,6 +3,7 @@ import { useHistory } from "react-router-dom";
 import firebase from "../../services/firebase";
 
 import { Container } from "./styles";
+import Loading from "../../components/Loading";
 
 import airplaneSVG from "../../assets/svg/airplaneColor.svg";
 import logo from "../../assets/img/logo196.png";
@@ -10,10 +11,12 @@ import logo from "../../assets/img/logo196.png";
 function Auth() {
   const [login, setLogin] = useState("");
   const [pass, setPass] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const history = useHistory();
 
   const handleSubmit = (e) => {
+    setLoading(true);
     e.preventDefault();
     firebase
       .auth()
@@ -35,21 +38,25 @@ function Auth() {
         <img id="logo" src={logo} />
       </div>
       <main>
-        <form onSubmit={handleSubmit}>
-          <input
-            onChange={(e) => setLogin(e.target.value)}
-            type="text"
-            name="login"
-            placeholder="E-mail"
-          />
-          <input
-            onChange={(e) => setPass(e.target.value)}
-            type="password"
-            name="pass"
-            placeholder="Senha"
-          />
-          <button type="submit">Entrar</button>
-        </form>
+        {loading ? (
+          <Loading />
+        ) : (
+          <form onSubmit={handleSubmit}>
+            <input
+              onChange={(e) => setLogin(e.target.value)}
+              type="text"
+              name="login"
+              placeholder="E-mail"
+            />
+            <input
+              onChange={(e) => setPass(e.target.value)}
+              type="password"
+              name="pass"
+              placeholder="Senha"
+            />
+            <button type="submit">Entrar</button>
+          </form>
+        )}
       </main>
     </Container>
   );
