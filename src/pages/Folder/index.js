@@ -42,7 +42,8 @@ function Folder() {
 
     setCandy(item);
     setCandyIndex(index);
-
+    setNewCandyName(item.name)
+    setNewCandyPrice(item.value)
     setPosImg1(Math.floor(Math.random() * 100));
     setPosImg2(Math.floor(Math.random() * 100));
     setPosImg3(Math.floor(Math.random() * 100));
@@ -138,13 +139,15 @@ function Folder() {
             <input
               type="text"
               name="name"
-              defaultValue={candy.name}
+              
+              value={newCandyName}
               onChange={(e) => setNewCandyName(e.target.value)}
             />
             <input
               type="number"
               name="value"
-              defaultValue={candy.value}
+              
+              value={newCandyPrice}
               step={0.01}
               onChange={(e) => setNewCandyPrice(e.target.value)}
             />
