@@ -2,250 +2,160 @@ import styled from "styled-components";
 import { colors } from "../../styles/colors";
 
 export const Main = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-  height: 100vh;
-  width: 100vw;
-  header {
-    grid-column: 1/6;
-    grid-row: 1/2;
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-    padding-left: 0.5em;
-    button {
-      background: ${colors.lightBlue};
-      color: ${colors.darkPink};
-      width: 4em;
-      height: 2em;
-      font-size: 1em;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    span {
-      color: ${colors.white};
-      font-size: 1.5em;
-      margin-left: auto;
-      margin-right: auto;
-    }
-  }
-  main {
-    grid-column: 1/4;
-    grid-row: 2/8;
-    #folder {
-      background: ${colors.white};
-      width: 100%;
-      height: 100%;
-      overflow-y: scroll;
-      ul {
-        list-style: none;
-        display: flex;
-        flex-direction: column;
-        margin-left: 2em;
-        justify-content: flex-start;
-        gap: 0.5em;
-        li:first-child {
-          margin-left: 0em;
-          margin-top: 2em;
+  height:100vh;
+  display:grid;
+  grid-template-columns: 2fr 1fr;
+  #list{
+    grid-column:1/2;
+    background-color:white;
+    height:100vh;
+    overflow-y:scroll;
+    #header{
+      display:flex;
+
+      z-index:100;
+      justify-content:space-evenly;
+      align-items:center;
+      height:auto;
+      cursor:auto;
+      #add{
+        cursor:pointer;      
+        background-color:${colors.mediumPurple};
+        border-radius:4px;
+        border:none;
+        color:white;
+        width:150px;
+        height:40px;
+        &:hover{
+          background-color:${colors.lightBlue};
+          box-shadow:4px 4px 2px ${colors.lightBlue};
         }
-        li:last-child {
-          background: ${colors.lightGreen};
-          border-radius: 2px;
-          color: ${colors.white};
-          &:hover {
-            background: ${colors.darkGreen};
-          }
+      }
+      #inputWrapper{
+        height:100px;
+        position: relative;
+      
+        span{
+          position:absolute;
+          background-color:rgba(0,0,0,0.4);
+          height:100px;
+          width:100px;
+          display:flex;
+          justify-content:center;
+          align-items:center;
+          color:white;
+          opacity:0;
+          z-index:11;
+          pointer-events:none;
         }
-        li {
-          display: flex;
-          justify-content: space-between;
-          cursor: pointer;
-          height: 1.5em;
-          border: 1px solid ${colors.white};
-          transition: 0.5s;
-          span {
-            color: ${colors.darkGray};
-            font-size: 0.9em;
-          }
-          button {
-            position: relative;
-            width: 6em;
-            border: none;
-            border-radius: 8px;
-            font-size: 1em;
-            cursor: pointer;
-            display: grid;
-            place-items: center;
-            &:hover::before {
-              animation: cardio infinite forwards 950ms;
-            }
-            &::before {
-              border-radius: 8px;
-              background: ${colors.darkPink};
-              content: "";
-              position: absolute;
-              top: 0;
-              left: 0;
-              right: 0;
-              bottom: 0;
-              margin: auto;
-            }
-            &::after {
-              border-radius: 8px;
-              color: ${colors.white};
-              content: "Deletar";
-              display: block;
-              background: ${colors.mediumPink};
-              position: absolute;
-              top: 0;
-              left: 0;
-              right: 0;
-              bottom: 0;
-              margin: auto;
-            }
-            @keyframes cardio {
-              from {
-                transform: scale(1);
-
-                opacity: 1;
-              }
-              to {
-                transform: scale(1.5);
-
-                opacity: 0;
-              }
-            }
-          }
-
-          &:hover {
-            height: 1.5em;
-            border: 1px solid ${colors.darkGray};
-            span {
-              font-size: 1em;
-              color: ${colors.black};
-            }
-          }
+        img{
+          position:absolute;
+          object-fit:contain;
+          max-width:100px;
+          height:100px;
+          pointer-events:none;
+          left:0;
+          z-index:10;
+        }
+        input{
+          position:absolute;
+          background-color:blue;
+          height:100px;
+          width:100px;
+          cursor:pointer;
+          opacity:0;
         }
       }
     }
-  }
-  aside {
-    grid-column: 4/6;
-    grid-row: 2/8;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    background: ${colors.mediumPurple};
-    form {
-      height: 100%;
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      #info {
-        width: 375px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-evenly;
-        align-items: center;
-        height: 100%;
-
-        input {
-          width: 85%;
-          background: transparent;
-          border: none;
-          border-bottom: 1px solid ${colors.darkGray};
-          color: ${colors.white};
-        }
-        #imageWrap {
-          width: 100%;
-          height: 50%;
-          background: white;
-          border-radius: 8px;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          img {
-            object-fit: contain;
-            max-width: 50%;
-          }
-        }
-        #buttonLoadImg {
-          position: relative;
-          width: 100%;
-          height: 100%;
-          overflow: hidden;
-          @keyframes kickself {
-            from {
-              transform: rotateZ(0deg);
-            }
-            to {
-              transform: rotateZ(360deg);
-            }
-          }
-          img {
-            position: absolute;
-            max-width: 20%;
-            top: 0;
-            left: 0;
-            animation: kickself forwards infinite 2s ease-in-out;
-          }
-
-          input[type="file"] {
-            display: block;
-            opacity: 0;
-            padding: 20px 10px;
-            width: 200px;
-            background-color: ${colors.lightBlue};
-            color: #fff;
-            text-transform: uppercase;
-            text-align: center;
-            z-index: 500;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            cursor: pointer;
-          }
-          #labelforfile {
-            padding: 20px 10px;
-            width: 200px;
-            background-color: ${colors.lightBlue};
-            color: #fff;
-            text-transform: uppercase;
-            text-align: center;
-            display: block;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            cursor: pointer;
-          }
-        }
-        button {
-          background: ${colors.lightBlue};
-          border: none;
-          height: 3em;
-          width: 6em;
-          border-radius: 8px;
-          color: ${colors.darkPink};
-          cursor: pointer;
+    #item{
+      height:50px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding-left:24px;
+      padding-right:24px;
+      cursor:pointer;
+      &:nth-child(even){
+        background-color:${colors.lightGreen};
+      }
+      &:hover{
+        background-color:${colors.lightBlue}
+      }
+      button{
+        cursor:pointer;
+        background-color:${colors.darkPink};
+        border:none;
+        border-radius:4px;
+        color:white;
+        width:100px;
+        height:40px;
+        &:hover{
+          background-color:${colors.mediumPink};
+          box-shadow:4px 4px 2px ${colors.darkPink} !important;
         }
       }
+    
     }
-    #animation {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      #logo {
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
-        position: absolute;
+   
+  }
+  #edit{
+    grid-column:2/3;
+    display:flex;
+    justify-content:space-evenly;
+    align-items:center;
+    flex-direction:column;
+    img{
+      object-fit:contain;
+      width:200px;
+      max-height:200px;
+    }
+    input{
+      width:80%;
+    }
+    .update{
+      cursor:pointer;
+      background-color:${colors.lightBlue};
+      border:none;
+      border-radius:4px;
+      color:white;
+      width:200px;
+      height:40px;
+    }
+    .disable{
+      color:gray;
+      pointer-events:none;
+      width:200px;
+      height:40px;
+    }
+  }
+  #create{
+    position:absolute;
+    top:0;
+    bottom:0;
+    left:0;
+    right:0;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    background-color:rgba(0,0,0,0.4);
+    #wrapper{
+      border-radius:8px;
+      background-image:linear-gradient(to right, ${colors.lightBlue}, ${colors.lightGreen});
+      display:flex;
+      height:400px;
+      justify-content:space-evenly;
+      align-items:center;
+      flex-direction:column;
+      img{
+        object-fit:contain;
+        width:200px;
+        max-height:200px;
+      }
+      div{
+        display:flex;
+        width:100%;
+        justify-content:space-evenly;
       }
     }
   }

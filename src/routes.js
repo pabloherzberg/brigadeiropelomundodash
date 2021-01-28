@@ -8,7 +8,6 @@ import Folder from "./pages/Folder";
 function Routes() {
   const userData = sessionStorage.getItem("user");
   const user = JSON.parse(userData);
-  console.log(user);
 
   return (
     <BrowserRouter>

@@ -4,190 +4,268 @@ import firebase from "../../services/firebase";
 
 import { Main } from "./styles";
 import Loading from "../../components/Loading";
-import brigadeiroSVG from "../../assets/img/brigadeiro.svg";
-import brownieSVG from "../../assets/img/brownie.svg";
-import gifSVG from "../../assets/img/gift.svg";
+
+import semImagem from '../../assets/img/Item_sem_imagem.svg.png'
 
 function Folder() {
-  const [loading, setLoading] = useState(true);
-  const [listOfCandys, setListOfCandys] = useState([]);
-  const [candy, setCandy] = useState({});
-  const [candyIndex, setCandyIndex] = useState(0);
-  const [image, setImage] = useState("");
-  const [imageFullData, setImageFullData] = useState("");
-  const [newCandyName, setNewCandyName] = useState("");
-  const [newCandyPrice, setNewCandyPrice] = useState(0);
-  const [posImg1, setPosImg1] = useState(Math.floor(Math.random() * 100));
-  const [posImg2, setPosImg2] = useState(Math.floor(Math.random() * 100));
-  const [posImg3, setPosImg3] = useState(Math.floor(Math.random() * 100));
 
-  const history = useHistory();
-  const { state } = useLocation();
-  const { folder } = state;
+  const {state} = useLocation();
 
-  useEffect(() => {
-    setLoading(true);
+
+  const [folder, setFolder] = useState(false)
+  const [selectedFlavor, setSelectedFlavor] = useState(false)
+  const [name, setName] = useState('')
+  const [price, setPrice] = useState(0)
+  const [hover, setHover] = useState(false)
+
+  const [image, setImage] = useState('')
+  const [imageFullData, setImageFullData] = useState('')
+
+  const [imageFolder, setImageFolder] = useState('')
+
+  const [create, setCreate] = useState(false)
+
+  const [loading, setLoading] = useState(true)
+
+  useEffect(()=>{
     firebase
       .database()
-      .ref()
+      .ref(`/pastas/${state}`)
       .on("value", async (snapshot) => {
-        const candys = snapshot.val();
-        setListOfCandys(candys);
-        setLoading(false);
+        const snap = snapshot.val();
+        if(snap){
+          setFolder(snap)
+          setImageFolder(snap.urlImage)
+        }else{
+          setFolder(false)
+        }
       });
-  }, []);
+  },[])
 
-  async function getCandyInfo(item, index) {
-    setLoading(true);
-
-    setCandy(item);
-    setCandyIndex(index);
-    setNewCandyName(item.name)
-    setNewCandyPrice(item.value)
-    setPosImg1(Math.floor(Math.random() * 100));
-    setPosImg2(Math.floor(Math.random() * 100));
-    setPosImg3(Math.floor(Math.random() * 100));
-
-    await firebase
+  useEffect(()=>{
+    setLoading(true)
+    firebase
       .storage()
-      .ref(folder)
-      .child(`/${index}`)
+      .ref(`${state}/${selectedFlavor.key}`)
       .getDownloadURL()
       .then((url) => {
         setImage(url);
-        setLoading(false);
+        setLoading(false)
       })
       .catch(() => {
         setImage(false);
-        setLoading(false);
+        setLoading(false)
       });
+  },[selectedFlavor])
+
+  async function handleCreateFlavor(){
+      //criar uma chave
+      const chave = firebase
+      .database()
+      .ref(`/pastas/${state}/flavors`)
+      .push()
+      .key
+
+
+      //upload imagem
+      if(imageFullData){
+       await firebase
+          .storage()
+          .ref(`${state}/${chave}`)
+          .put(imageFullData)
+          .then(() => {
+            firebase
+            .storage()
+            .ref(`${state}/${chave}`)
+            .getDownloadURL()
+            .then(res=>{
+               //criar item passando a chave criada                    
+                const candy = {
+                  name: name,
+                  price: price,
+                  key: chave,
+                  urlImage:res
+                }
+                //setar valores do item na chave criada
+                firebase
+                  .database()
+                  .ref(`/pastas/${state}/flavors/${chave}`)
+                  .set(candy)
+            })
+          })
+          .catch((e) => console.error(e));
+       } 
+
+       setName('')
+       setPrice(0)
+       setCreate(false)
+ 
+  }
+
+  async function handleUpdateFolderImage(event){
+
+    const fileObj = event.target.files[0];
+
+    if(folder.urlImage){
+      await firebase
+            .storage()
+            .ref(`${state}/${state}`)
+            .delete()
+            .then(()=>{
+              firebase
+                .storage()
+                .ref(`${state}/${state}`)
+                .put(fileObj)
+                .then(()=>{
+                  firebase
+                  .storage()
+                  .ref(`${state}/${state}`)
+                  .getDownloadURL()
+                  .then(res=>{
+                      //setar valores do item na chave criada
+                      firebase
+                        .database()
+                        .ref(`/pastas/${state}`)
+                        .set({urlImage:res, ...folder})
+                  })
+                })
+            })
+        }else{
+          firebase
+              .storage()
+              .ref(`${state}/${state}`)
+              .put(fileObj)
+              .then(()=>{
+                firebase
+                .storage()
+                .ref(`${state}/${state}`)
+                .getDownloadURL()
+                .then(res=>{
+                    //setar valores do item na chave criada
+                    firebase
+                      .database()
+                      .ref(`/pastas/${state}`)
+                      .set({urlImage:res, ...folder})
+                })
+              })
+        }
+
+          const image = URL.createObjectURL(fileObj);
+          setImageFolder(image)
+  }
+
+  function handleDelete(e){
+
+    const res = window.confirm('Tem certeza que deseja apagar esta opção de sabor?')
+    if(res){
+     firebase
+       .database()
+       .ref(`/pastas/${state}/flavors/${e.target.name}`)
+       .remove()
+    }
   }
 
   async function fileHandler(event) {
-    setLoading(true);
+    //setLoading(true);
     const fileObj = event.target.files[0];
 
     if (fileObj) {
       const image = URL.createObjectURL(fileObj);
       setImage(image);
       setImageFullData(fileObj);
-      setLoading(false);
+      //setLoading(false);
     } else {
       console.log("Imagem não carregada");
     }
   }
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-
+  function handleUpdate(){
     firebase
       .database()
-      .ref(`${folder}/${candyIndex}`)
+      .ref(`/pastas/${state}/flavors/${selectedFlavor.key}`)
       .set({
-        name: newCandyName || candy.name,
-        value: newCandyPrice || candy.value,
-      });
-
-    firebase
-      .storage()
-      .ref(`${folder}/${candyIndex}`)
-      .put(imageFullData)
-      .then((snapshot) => console.log("upload"))
-      .catch((e) => console.error(e));
-  }
-
-  async function handleDelete(index) {
-    await firebase.database().ref(folder).child(`/${index}`).remove();
+        name:name,
+        price:price,
+        key:selectedFlavor.key
+      })
   }
 
   return (
-    <Main>
-      <header>
-        <button onClick={() => history.push("/home")}>voltar</button>
-        <span>Pasta {folder}</span>
-      </header>
-      <main>
-        {loading ? (
-          <Loading />
-        ) : (
-          <div id="folder">
-            <ul>
-              {listOfCandys[folder].map((item, index) => (
-                <li key={index} onClick={() => getCandyInfo(item, index)}>
-                  <span>{item.name}</span>
+    <Main>    
+    {/* LISTAGEM */}
+      {folder &&
+      <div id='list'>
+        <div id='header'>
+          <button id='add' onClick={()=>setCreate(true)}>Adicionar</button>
+          <div 
+            onMouseLeave={()=>setHover(false)}
+            onMouseEnter={()=>setHover(true)} 
+            id='inputWrapper'>
+            <input type="file" name="image" onChange={handleUpdateFolderImage} />
+            {imageFolder ? <img style={{width:'200px'}} src={imageFolder} />: <img style={{width:'200px'}} src={semImagem} /> }
+            <span style={{opacity:hover?1:0}}>Alterar</span>
+          </div>
+          <h2>{folder.name}</h2>
+        </div>
+        {Object.values(folder.flavors).map(flavor=>(
+          <div id='item' 
+            onClick={()=>{
+              setSelectedFlavor(flavor)
+            }} 
+            className='flavorItem'>
+            <p>{flavor.name}</p>
+            <button name={flavor.key} onClick={handleDelete}>Deletar</button>
+          </div>
+        ))}
+      </div>}
 
-                  <button onClick={() => handleDelete(index)}></button>
-                </li>
-              ))}
-              <li
-                onClick={() => {
-                  setCandyIndex(listOfCandys[folder].length);
-                  setCandy({ name: "Novo", value: 0 });
-                  setImage(false);
-                }}
-              >
-                {" "}
-                + Adicionar doce
-              </li>
-            </ul>
-          </div>
-        )}
-      </main>
-      <aside>
-        <form onSubmit={handleSubmit}>
-          <div id="info">
-            <input
-              type="text"
-              name="name"
-              
-              value={newCandyName}
-              onChange={(e) => setNewCandyName(e.target.value)}
+    {/* EDIÇÃO */}
+      {selectedFlavor ?
+        <div id='edit'>
+          {loading? <Loading/> :<img src={image} />}
+          <input 
+            type="text" 
+            name="name" 
+            onChange={e=>setName(e.target.value)}
+            placeholder={selectedFlavor.name} 
             />
-            <input
-              type="number"
-              name="value"
-              
-              value={newCandyPrice}
-              step={0.01}
-              onChange={(e) => setNewCandyPrice(e.target.value)}
+          <input 
+            type="text" 
+            name="price" 
+            onChange={e=>setPrice(e.target.value)} 
+            placeholder={selectedFlavor.price}
             />
-            <div id="imageWrap">
-              {image ? (
-                loading ? (
-                  <Loading />
-                ) : (
-                  <img src={image} alt="selfie do doce" />
-                )
-              ) : (
-                <div id="buttonLoadImg">
-                  <img
-                    style={{ top: `${posImg1}%`, left: `${posImg3}%` }}
-                    src={brigadeiroSVG}
-                  />
-                  <img
-                    style={{ top: `${posImg2}%`, left: `${posImg2}%` }}
-                    src={gifSVG}
-                  />
-                  <img
-                    style={{ top: `${posImg3}%`, left: `${posImg1}%` }}
-                    src={brownieSVG}
-                  />
-                  <input
-                    name="loadImg"
-                    type="file"
-                    name="img"
-                    onChange={fileHandler}
-                  />
-                  <label id="labelforfile" htmlFor="loadImg">
-                    Escolher imagem
-                  </label>
-                </div>
-              )}
-            </div>
-            <button type="submit">Atualizar</button>
+          <button className={(name && price)?'update':'disable'} onClick={handleUpdate}>Atualizar</button>
+      </div>:
+      <Loading/>
+      }
+      {/* CRIAÇÃO */}
+    {create &&
+      <div id='create'>
+        <div id='wrapper'>
+          <input 
+            type="text" 
+            name="name"
+            placeholder='Nome' 
+            onChange={e=>setName(e.target.value)} 
+            />
+          <input 
+            type="text" 
+            name="price" 
+            placeholder='R$ 0,00'
+            onChange={e=>setPrice(e.target.value)}
+            value={Number(price).toFixed(2)}
+            />
+          {image&& <img src={image} />}
+          
+          <input type="file" name="image" onChange={fileHandler} />
+          <div>
+            <button onClick={handleCreateFlavor}>Salvar</button>
+            <button onClick={()=>setCreate(false)}>Fechar</button>
           </div>
-        </form>
-      </aside>
+        </div>
+      </div>
+    }
     </Main>
   );
 }

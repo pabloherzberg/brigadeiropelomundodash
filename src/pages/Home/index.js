@@ -4,98 +4,221 @@ import { useHistory } from "react-router-dom";
 
 import Loading from "../../components/Loading";
 
-import logo from "../../assets/img/brigadeiropelomundo.png";
 import folderSVG from "../../assets/img/folder.svg";
-import airplaneSVG from "../../assets/svg/airplane.svg";
+
+import semImagem from '../../assets/img/Item_sem_imagem.svg.png'
 
 import { Main } from "./styles.js";
-import anime from "animejs/lib/anime.es.js";
 
 function Home() {
   const [loading, setLoading] = useState(true);
-  const [listOfCandys, setListOfCandys] = useState([]);
+  const [folders, setFolders] = useState([]);
+  const [rightClick, setRightClick] = useState(false)
+  const [modalCreateFolder, setModalCreateFolder] = useState(true)
+  const [selectedFolder, setSelectedFolder] = useState('')
+  const [folderName, setFolderName] = useState('')
+  const [folderStatus, setFolderStatus] = useState(false)
+  const [image, setImage] = useState(false)
+  const [imageFullData, setImageFullData] = useState(false)
+  const [hover, setHover] = useState(false)
+  const [mousePos, setMousePos] = useState({
+    x:0,
+    y:0
+  })
 
   const history = useHistory();
-
-  const animation = useRef(null);
-  const animationRef = useRef(null);
-
-  useEffect(() => {
-    const path = anime.path("#line path");
-    animationRef.current = anime({
-      targets: "#animation #airplane",
-      translateX: path("x"),
-      translateY: path("y"),
-      rotate: path("angle"),
-      easiling: "linear",
-      duration: 20000,
-      loop: true,
-    });
-  }, []);
 
   useEffect(() => {
     setLoading(true);
     firebase
       .database()
-      .ref()
+      .ref('/pastas')
       .on("value", async (snapshot) => {
-        const candys = snapshot.val();
-        setListOfCandys(candys);
+        const snap = snapshot.val();
+        setFolders(snap);
         setLoading(false);
       });
   }, []);
 
+  async function fileHandler(event) {
+    //setLoading(true);
+    const fileObj = event.target.files[0];
+
+    if (fileObj) {
+      const image = URL.createObjectURL(fileObj);
+      setImage(image);
+      setImageFullData(fileObj);
+      //setLoading(false);
+    } else {
+      console.log("Imagem não carregada");
+    }
+  }
+
+  async function handleCreateFolder(){
+
+    //criar uma chave
+    const chave = firebase
+    .database()
+    .ref('/pastas')
+    .push()
+    .key
+
+    await firebase
+          .storage()
+          .ref(`${chave}/${chave}`)
+          .put(imageFullData)
+          .then(() => {
+            firebase
+            .storage()
+            .ref(`${chave}/${chave}`)
+            .getDownloadURL()
+            .then(res=>{
+                //criar item passando a chave criada                    
+                const folder = {
+                  name: folderName,
+                  key: chave,
+                  flavors:false,
+                  urlImage:res
+                }
+                //setar valores do item na chave criada
+                firebase
+                .database()
+                .ref(`/pastas/${chave}`)
+                .set(folder)
+              })
+          })
+          .catch((e) => console.error(e));
+
+
+
+   
+/* 
+      //criar item passando a chave criada                    
+      const folder = {
+        name: folderName,
+        key: chave,
+        flavors:false
+      }
+
+      //setar valores do item na chave criada
+      firebase
+      .database()
+      .ref(`/pastas/${chave}`)
+      .set(folder) */
+
+      setFolderName('')
+      setModalCreateFolder(false)
+
+  }
+
+  function handleDeleteFolder(){
+   const res = window.confirm('Tem certeza que deseja deletar esta pasta? Você perderá todos os dados salvos nesta pasta')
+   if(res){
+    firebase
+      .database()
+      .ref(`/pastas/${selectedFolder}`)
+      .remove()
+   }
+
+    setRightClick(false)
+  }
+
+  function toogleStatus(){
+    firebase
+      .database()
+      .ref(`pastas/${selectedFolder}/status`)
+      .set(!folderStatus)
+
+    setRightClick(false)
+  }
+
   return (
     <Main>
       <header>
-        <span>Brigadeiro Pelo Mundo Dashboard</span>
+        <h1>Brigadeiro Pelo Mundo Dashboard</h1>
       </header>
-      <main>
+      <div id='main'
+        onContextMenu={(e)=>{
+                    e.target.id === 'main' && setSelectedFolder(false)
+                    e.preventDefault()
+                    setMousePos({
+                      x:e.clientX,
+                      y:e.clientY
+                    })
+                    setRightClick(true)
+                }}
+      >
         {loading ? (
           <Loading />
-        ) : (
-          <ul>
-            {Object.keys(listOfCandys).map((key, index) => (
-              <li key={index}>
-                <div
-                  onClick={() => {
-                    history.push({
-                      pathname: "/pasta",
-                      state: {
-                        candys: listOfCandys,
-                        folder: key,
-                      },
-                    });
-                  }}
-                >
-                  <img src={folderSVG} />
-                </div>
-                <span>{key}</span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </main>
-      <aside onClick={() => animationRef.current.restart()}>
-        <div ref={animation} id="animation">
-          <img id="logo" src={logo} />
-          <svg
-            id="line"
-            viewBox="0 0 411 245"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M410.5 207.45C408.151 218.995 401.181 226.896 390.232 232.27C379.241 237.664 364.255 240.503 345.961 241.876C322.88 243.609 294.649 243.007 262.7 242.326C243.98 241.926 223.984 241.5 203 241.5C179.058 241.5 156.183 242.234 134.998 242.914C131.068 243.04 127.196 243.164 123.385 243.281C99.0314 244.032 77.2254 244.499 58.9703 243.376C40.7023 242.252 26.0624 239.537 16.0007 233.969C10.9792 231.19 7.11112 227.707 4.49587 223.367C1.88113 219.027 0.5 213.8 0.5 207.5C0.5 93.1725 92.2862 0.5 205.5 0.5C318.697 0.5 410.473 93.1454 410.5 207.45Z"
-              stroke="black"
-            />
-          </svg>
+        ) : 
+           folders && Object.values(folders).map(folder => (
+              <div 
+                className={folder.status?'folder activated':'folder'}
+                key={folder.key}
+                onClick={()=>history.push({
+                  pathname:'/pasta',
+                  state:folder.key
+                })}
+                onContextMenu={(e)=>{
+                    e.preventDefault()
+                    setSelectedFolder(folder.key)
+                    setFolderStatus(folder.status)
+                    setMousePos({
+                      x:e.clientX,
+                      y:e.clientY
+                    })
+                    setRightClick(true)
+                }}
+              >   
+                <img  src={folderSVG} />
+                <p  >{folder.name}</p>
+              </div>
+            ))       
+        }
+      </div>
 
-          <div id="airplane">
-            <img src={airplaneSVG} />
+     {rightClick &&  (
+       <div id='menuWrapper' onClick={e=>{
+         if(e.target.id === 'menuWrapper'){
+           setRightClick(false)
+         }
+       }}>
+         <div style={{top:mousePos.y, left:mousePos.x}} id='menu'>
+          <p className={!selectedFolder?'':'disable'} 
+              onClick={()=>{
+                setModalCreateFolder(true)
+                setRightClick(false)
+              }}>Criar pasta</p>
+          <p className={!selectedFolder?'disable':''} onClick={toogleStatus}>{folderStatus?'Desativar':'Ativar'}</p>
+          <p className={!selectedFolder?'disable delete':'delete'} onClick={handleDeleteFolder}>Deletar pasta</p>
+        </div>
+      </div>
+      )}
+    
+    {modalCreateFolder &&  (
+      <div id='createFolder'>
+        <div>
+          <input placeholder='Nome da pasta' type="text" name="name" onChange={e=>setFolderName(e.target.value)}/>
+          <div 
+            onMouseLeave={()=>setHover(false)}
+            onMouseEnter={()=>setHover(true)} 
+            id='inputWrapper'>
+            <input type="file" name="image" onChange={fileHandler} />
+            {image ? <img style={{width:'200px'}} src={image} />: <img style={{width:'200px'}} src={semImagem} /> }
+            <span style={{opacity:hover?1:0}}>Alterar</span>
+          </div>
+          <div id='wrapperActions'>
+            <button onClick={()=>{
+              setFolderName('')
+              setImage(false)
+              setModalCreateFolder(false)
+            }}>Cancelar</button>
+            <button onClick={handleCreateFolder}>Criar pasta</button>
           </div>
         </div>
-      </aside>
+      </div>
+    )}
+       
     </Main>
   );
 }
