@@ -14,7 +14,7 @@ function Home() {
   const [loading, setLoading] = useState(true);
   const [folders, setFolders] = useState([]);
   const [rightClick, setRightClick] = useState(false)
-  const [modalCreateFolder, setModalCreateFolder] = useState(true)
+  const [modalCreateFolder, setModalCreateFolder] = useState(false)
   const [selectedFolder, setSelectedFolder] = useState('')
   const [folderName, setFolderName] = useState('')
   const [folderStatus, setFolderStatus] = useState(false)
