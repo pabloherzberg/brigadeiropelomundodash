@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
 import { useLocation, useHistory } from "react-router-dom";
 import firebase from "../../services/firebase";
@@ -27,6 +28,8 @@ function Folder() {
 
   const [loading, setLoading] = useState(true)
 
+  const [minCount, setMinCount] = useState(folder && folder.count? folder.count: 1)
+
   useEffect(()=>{
     firebase
       .database()
@@ -40,7 +43,7 @@ function Folder() {
           setFolder(false)
         }
       });
-  },[])
+  },[state])
 
   useEffect(()=>{
     setLoading(true)
@@ -56,7 +59,16 @@ function Folder() {
         setImage(false);
         setLoading(false)
       });
-  },[selectedFlavor])
+  },[selectedFlavor, state])
+
+  useEffect(()=>{
+   
+      firebase
+          .database()
+          .ref(`/pastas/${state}/count`)
+          .set(minCount)
+    
+  },[minCount])
 
   async function handleCreateFlavor(){
       //criar uma chave
@@ -206,6 +218,15 @@ function Folder() {
             <span style={{opacity:hover?1:0}}>Alterar</span>
           </div>
           <h2>{folder.name}</h2>
+          <div id='min'>
+            <span>Qnt mínima:</span>
+            <input 
+              type="text" 
+              name="min" 
+              value={minCount} 
+              onChange={e=>setMinCount(e.target.value)}
+            />
+          </div>
         </div>
         {Object.values(folder.flavors).map(flavor=>(
           <div id='item' 

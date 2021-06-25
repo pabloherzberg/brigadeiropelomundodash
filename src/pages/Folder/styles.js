@@ -12,9 +12,9 @@ export const Main = styled.div`
     overflow-y:scroll;
     #header{
       display:flex;
-
       z-index:100;
       justify-content:space-evenly;
+      flex-wrap: wrap;
       align-items:center;
       height:auto;
       cursor:auto;
@@ -64,6 +64,18 @@ export const Main = styled.div`
           width:100px;
           cursor:pointer;
           opacity:0;
+        }
+      }
+      h2{
+        font-size: 16px;
+        padding-left: 40px;
+      }
+      #min{
+        span{
+          padding-right:10px;
+        }
+        input{
+          width:5em;
         }
       }
     }
