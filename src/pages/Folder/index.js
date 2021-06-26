@@ -28,7 +28,7 @@ function Folder() {
 
   const [loading, setLoading] = useState(true)
 
-  const [minCount, setMinCount] = useState(folder && folder.count? folder.count: 1)
+  const [minCount, setMinCount] = useState(false)
 
   useEffect(()=>{
     firebase
@@ -39,6 +39,7 @@ function Folder() {
         if(snap){
           setFolder(snap)
           setImageFolder(snap.urlImage)
+          setMinCount(snap.count)
         }else{
           setFolder(false)
         }
@@ -62,12 +63,13 @@ function Folder() {
   },[selectedFlavor, state])
 
   useEffect(()=>{
-   
-      firebase
-          .database()
-          .ref(`/pastas/${state}/count`)
-          .set(minCount)
-    
+   if(folder){
+     firebase
+         .database()
+         .ref(`/pastas/${state}/count`)
+         .set(minCount)
+
+   }    
   },[minCount])
 
   async function handleCreateFlavor(){
@@ -223,7 +225,7 @@ function Folder() {
             <input 
               type="text" 
               name="min" 
-              value={minCount} 
+              value={minCount || 0} 
               onChange={e=>setMinCount(e.target.value)}
             />
           </div>
