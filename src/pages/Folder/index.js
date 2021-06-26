@@ -39,7 +39,7 @@ function Folder() {
         if(snap){
           setFolder(snap)
           setImageFolder(snap.urlImage)
-          setMinCount(snap.count)
+          setMinCount(snap.count || 1)
         }else{
           setFolder(false)
         }

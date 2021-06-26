@@ -16,6 +16,7 @@ height:100vh;
   #main{
     flex:6;
     display:flex;
+    flex-wrap: wrap;
     .folder{
       cursor:pointer;
       margin-left:24px;
